@@ -22,6 +22,7 @@ from infer_detectron2_densepose.infer_detectron2_densepose_process import InferD
 
 # PyQt GUI framework
 from PyQt5.QtWidgets import *
+import torch
 
 
 # --------------------
@@ -40,6 +41,12 @@ class InferDetectron2DenseposeWidget(core.CWorkflowTaskWidget):
 
         # Create layout : QGridLayout by default
         self.gridLayout = QGridLayout()
+
+        self.check_cuda = pyqtutils.append_check(self.gridLayout, "Cuda", self.parameters.cuda and
+                                                 torch.cuda.is_available())
+        self.check_cuda.setEnabled(torch.cuda.is_available())
+        self.spin_thr = pyqtutils.append_double_spin(self.gridLayout, "Detection threshold", self.parameters.thr, min=0,
+                                                     max=1, step=0.01, decimals=2)
         # PyQt -> Qt wrapping
         layout_ptr = qtconversion.PyQtToQt(self.gridLayout)
 
@@ -51,7 +58,9 @@ class InferDetectron2DenseposeWidget(core.CWorkflowTaskWidget):
 
         # Get parameters from widget
         # Example : self.parameters.windowSize = self.spinWindowSize.value()
-
+        self.parameters.thr = self.spin_thr.value()
+        self.parameters.cuda = self.check_cuda.isChecked()
+        self.parameters.update = True
         # Send signal to launch the process
         self.emitApply(self.parameters)
 

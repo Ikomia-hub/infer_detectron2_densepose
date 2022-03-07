@@ -45,18 +45,23 @@ class InferDetectron2DenseposeParam(core.CWorkflowTaskParam):
         core.CWorkflowTaskParam.__init__(self)
         # Place default value initialization here
         # Example : self.windowSize = 25
+        self.cuda = torch.cuda.is_available()
+        self.thr = 0.8
 
     def setParamMap(self, param_map):
         # Set parameters values from Ikomia application
         # Parameters values are stored as string and accessible like a python dict
         # Example : self.windowSize = int(param_map["windowSize"])
-        pass
+        self.cuda = eval(param_map["cuda"])
+        self.thr = float(param_map["thr"])
 
     def getParamMap(self):
         # Send parameters values to Ikomia application
         # Create the specific dict structure (string container)
         param_map = core.ParamMap()
         # Example : paramMap["windowSize"] = str(self.windowSize)
+        param_map["cuda"] = str(self.cuda)
+        param_map["thr"] = str(self.thr)
         return param_map
 
 
@@ -81,7 +86,7 @@ class InferDetectron2Densepose(dataprocess.C2dImageTask):
         add_densepose_config(self.cfg)
         self.cfg.merge_from_file(os.path.dirname(__file__) + "/configs/densepose_rcnn_R_50_FPN_s1x.yaml")
         self.cfg.MODEL.WEIGHTS = "https://dl.fbaipublicfiles.com/densepose/densepose_rcnn_R_50_FPN_s1x/165712039/model_final_162be9.pkl"
-        self.predictor = DefaultPredictor(self.cfg)
+        self.predictor = None
         self.thr = 0.8
 
     def getProgressSteps(self, eltCount=1):
@@ -106,6 +111,14 @@ class InferDetectron2Densepose(dataprocess.C2dImageTask):
         levels = np.linspace(0, 1, 9)
         prop_line = core.GraphicsPolylineProperty()
         prop_line.line_size = 1
+        param = self.getParam()
+        
+        if self.predictor is None or param.update:
+            self.cfg.MODEL.DEVICE = 'cuda' if param.cuda else 'cpu'
+            self.predictor = DefaultPredictor(self.cfg)
+            self.thr = param.thr
+            param.update = False
+            
         with torch.no_grad():
             outputs = self.predictor(img)["instances"]
             scores = outputs.get("scores").cpu()
