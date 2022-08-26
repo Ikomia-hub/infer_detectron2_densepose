@@ -1,3 +1,4 @@
+from infer_detectron2_densepose import update_path
 from ikomia import core, dataprocess
 import copy
 from infer_detectron2_densepose.densepose.structures import DensePoseChartPredictorOutput, \
