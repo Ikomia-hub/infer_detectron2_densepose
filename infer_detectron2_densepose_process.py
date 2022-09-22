@@ -165,7 +165,7 @@ class InferDetectron2DenseposeFactory(dataprocess.CTaskFactory):
         self.info.journal = "Conference on Computer Vision and Pattern Recognition (CVPR)"
         self.info.year = 2018
         self.info.license = "Apache-2.0 License"
-        self.info.version = "1.1.0"
+        self.info.version = "1.1.2"
         self.info.repo = "https://github.com/facebookresearch/detectron2/tree/master/projects/DensePose"
         self.info.documentationLink = "https://detectron2.readthedocs.io/index.html"
         self.info.path = "Plugins/Python/Pose"
