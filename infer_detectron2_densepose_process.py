@@ -29,17 +29,17 @@ class InferDetectron2DenseposeParam(core.CWorkflowTaskParam):
         self.cuda = torch.cuda.is_available()
         self.thr = 0.8
 
-    def setParamMap(self, param_map):
+    def set_values(self, param_map):
         # Set parameters values from Ikomia application
         # Parameters values are stored as string and accessible like a python dict
         # Example : self.windowSize = int(param_map["windowSize"])
         self.cuda = eval(param_map["cuda"])
         self.thr = float(param_map["thr"])
 
-    def getParamMap(self):
+    def get_values(self):
         # Send parameters values to Ikomia application
         # Create the specific dict structure (string container)
-        param_map = core.ParamMap()
+        param_map = {}
         # Example : paramMap["windowSize"] = str(self.windowSize)
         param_map["cuda"] = str(self.cuda)
         param_map["thr"] = str(self.thr)
@@ -55,14 +55,14 @@ class InferDetectron2Densepose(dataprocess.C2dImageTask):
     def __init__(self, name, param):
         dataprocess.C2dImageTask.__init__(self, name)
         # Add input/output of the process here
-        # Example :  self.addInput(dataprocess.CImageIO())
-        #           self.addOutput(dataprocess.CImageIO())
-        self.addOutput(dataprocess.CGraphicsOutput())
+        # Example :  self.add_input(dataprocess.CImageIO())
+        #           self.add_output(dataprocess.CImageIO())
+        self.add_output(dataprocess.CGraphicsOutput())
         # Create parameters class
         if param is None:
-            self.setParam(InferDetectron2DenseposeParam())
+            self.set_param_object(InferDetectron2DenseposeParam())
         else:
-            self.setParam(copy.deepcopy(param))
+            self.set_param_object(copy.deepcopy(param))
         self.cfg = get_cfg()
         add_densepose_config(self.cfg)
         self.cfg.merge_from_file(os.path.dirname(__file__) + "/configs/densepose_rcnn_R_50_FPN_s1x.yaml")
@@ -70,29 +70,29 @@ class InferDetectron2Densepose(dataprocess.C2dImageTask):
         self.predictor = None
         self.thr = 0.8
 
-    def getProgressSteps(self):
+    def get_progress_steps(self):
         # Function returning the number of progress steps for this process
         # This is handled by the main progress bar of Ikomia application
         return 1
 
     def run(self):
         # Core function of your process
-        # Call beginTaskRun for initialization
-        self.beginTaskRun()
+        # Call begin_task_run for initialization
+        self.begin_task_run()
         # Get input
-        input_img = self.getInput(0)
-        img = input_img.getImage()
+        input_img = self.get_input(0)
+        img = input_img.get_image()
 
         # Get graphic output
-        graphics_output = self.getOutput(1)
-        graphics_output.setNewLayer("Densepose")
-        graphics_output.setImageIndex(0)
-        self.forwardInputImage(0, 0)
+        graphics_output = self.get_output(1)
+        graphics_output.set_new_layer("Densepose")
+        graphics_output.set_image_index(0)
+        self.forward_input_image(0, 0)
 
         levels = np.linspace(0, 1, 9)
         prop_line = core.GraphicsPolylineProperty()
         prop_line.line_size = 1
-        param = self.getParam()
+        param = self.get_param_object()
         
         if self.predictor is None or param.update:
             self.cfg.MODEL.DEVICE = 'cuda' if param.cuda else 'cpu'
@@ -123,14 +123,14 @@ class InferDetectron2Densepose(dataprocess.C2dImageTask):
                             self.visualize(iso_u.collections, graphics_output, prop_line)
                             self.visualize(iso_v.collections, graphics_output, prop_line)
 
-                            graphics_output.addRectangle(float(x1), float(y1), float(x2 - x1),
+                            graphics_output.add_rectangle(float(x1), float(y1), float(x2 - x1),
                                                          float(y2 - y1))
 
         # Step progress bar:
-        self.emitStepProgress()
+        self.emit_step_progress()
 
-        # Call endTaskRun to finalize process
-        self.endTaskRun()
+        # Call end_task_run to finalize process
+        self.end_task_run()
 
     def visualize(self, collections, graphics_output, properties_line):
         for i in range(len(collections)):
@@ -141,7 +141,7 @@ class InferDetectron2Densepose(dataprocess.C2dImageTask):
                 for j in range(len(lst_pts)):
                     pts.append(core.CPointF(float(lst_pts[j][0]),
                                             float(lst_pts[j][1])))
-                graphics_output.addPolyline(pts, properties_line)
+                graphics_output.add_polyline(pts, properties_line)
 
 
 # --------------------
@@ -154,7 +154,7 @@ class InferDetectron2DenseposeFactory(dataprocess.CTaskFactory):
         dataprocess.CTaskFactory.__init__(self)
         # Set process information as string here
         self.info.name = "infer_detectron2_densepose"
-        self.info.shortDescription = "Detectron2 inference model for human pose detection."
+        self.info.short_description = "Detectron2 inference model for human pose detection."
         self.info.description = "Inference model for human pose detection trained on COCO dataset. " \
                                 "Implementation from Detectron2 (Facebook Research). " \
                                 "Dense human pose estimation aims at mapping all human pixels " \
@@ -165,11 +165,11 @@ class InferDetectron2DenseposeFactory(dataprocess.CTaskFactory):
         self.info.journal = "Conference on Computer Vision and Pattern Recognition (CVPR)"
         self.info.year = 2018
         self.info.license = "Apache-2.0 License"
-        self.info.version = "1.1.2"
+        self.info.version = "1.2.0"
         self.info.repo = "https://github.com/facebookresearch/detectron2/tree/master/projects/DensePose"
-        self.info.documentationLink = "https://detectron2.readthedocs.io/index.html"
+        self.info.documentation_link = "https://detectron2.readthedocs.io/index.html"
         self.info.path = "Plugins/Python/Pose"
-        self.info.iconPath = "icons/detectron2.png"
+        self.info.icon_path = "icons/detectron2.png"
         self.info.keywords = "human,pose,detection,keypoint,facebook,detectron2,mesh,3D surface"
 
     def create(self, param=None):
