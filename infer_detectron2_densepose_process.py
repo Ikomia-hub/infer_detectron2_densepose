@@ -27,14 +27,14 @@ class InferDetectron2DenseposeParam(core.CWorkflowTaskParam):
         # Place default value initialization here
         # Example : self.windowSize = 25
         self.cuda = torch.cuda.is_available()
-        self.thr = 0.8
+        self.conf_thres = 0.8
 
     def set_values(self, param_map):
         # Set parameters values from Ikomia application
         # Parameters values are stored as string and accessible like a python dict
         # Example : self.windowSize = int(param_map["windowSize"])
         self.cuda = eval(param_map["cuda"])
-        self.thr = float(param_map["thr"])
+        self.conf_thres = float(param_map["conf_thres"])
 
     def get_values(self):
         # Send parameters values to Ikomia application
@@ -42,7 +42,7 @@ class InferDetectron2DenseposeParam(core.CWorkflowTaskParam):
         param_map = {}
         # Example : paramMap["windowSize"] = str(self.windowSize)
         param_map["cuda"] = str(self.cuda)
-        param_map["thr"] = str(self.thr)
+        param_map["conf_thres"] = str(self.conf_thres)
         return param_map
 
 
@@ -68,7 +68,7 @@ class InferDetectron2Densepose(dataprocess.C2dImageTask):
         self.cfg.merge_from_file(os.path.dirname(__file__) + "/configs/densepose_rcnn_R_50_FPN_s1x.yaml")
         self.cfg.MODEL.WEIGHTS = "https://dl.fbaipublicfiles.com/densepose/densepose_rcnn_R_50_FPN_s1x/165712039/model_final_162be9.pkl"
         self.predictor = None
-        self.thr = 0.8
+        self.conf_thres = 0.8
 
     def get_progress_steps(self):
         # Function returning the number of progress steps for this process
@@ -97,7 +97,7 @@ class InferDetectron2Densepose(dataprocess.C2dImageTask):
         if self.predictor is None or param.update:
             self.cfg.MODEL.DEVICE = 'cuda' if param.cuda else 'cpu'
             self.predictor = DefaultPredictor(self.cfg)
-            self.thr = param.thr
+            self.conf_thres = param.conf_thres
             param.update = False
             
         with torch.no_grad():
@@ -112,7 +112,7 @@ class InferDetectron2Densepose(dataprocess.C2dImageTask):
                         extractor = DensePoseOutputsExtractor()
                     pred_densepose = extractor(outputs)[0]
                     for i, (score, truc, box_xyxy) in enumerate(zip(scores, pred_densepose, pred_boxes_XYXY)):
-                        if score > self.thr:
+                        if score > self.conf_thres:
                             x1, y1, x2, y2 = box_xyxy
                             u = truc.uv[0, :, :].cpu().numpy()
                             v = truc.uv[1, :, :].cpu().numpy()
