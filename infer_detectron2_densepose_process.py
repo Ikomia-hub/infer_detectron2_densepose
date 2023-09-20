@@ -93,7 +93,10 @@ class InferDetectron2Densepose(dataprocess.C2dImageTask):
         prop_line = core.GraphicsPolylineProperty()
         prop_line.line_size = 1
         param = self.get_param_object()
-        
+
+        # Set cache dir in the algorithm folder to simplify deployment
+        os.environ["FVCORE_CACHE"] = os.path.join(os.path.dirname(__file__), "models")
+
         if self.predictor is None or param.update:
             self.cfg.MODEL.DEVICE = 'cuda' if param.cuda else 'cpu'
             self.predictor = DefaultPredictor(self.cfg)
