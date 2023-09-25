@@ -1,1 +1,3 @@
 git+https://github.com/Ikomia-dev/detectron2.git@v0.6-win10
+
+matplotlib<=3.4.3
