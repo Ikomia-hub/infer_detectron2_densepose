@@ -97,7 +97,7 @@ class InferDetectron2Densepose(dataprocess.C2dImageTask):
         if self.predictor is None or param.update:
             # Set cache dir in the algorithm folder to simplify deployment
             os.environ["FVCORE_CACHE"] = os.path.join(os.path.dirname(__file__), "models")
-            self.cfg.MODEL.DEVICE = 'cuda' if param.cuda else 'cpu'
+            self.cfg.MODEL.DEVICE = 'cuda' if param.cuda and torch.cuda.is_available() else 'cpu'
             self.predictor = DefaultPredictor(self.cfg)
             self.conf_thres = param.conf_thres
             os.environ.pop("FVCORE_CACHE")
