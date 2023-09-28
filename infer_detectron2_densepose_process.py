@@ -158,18 +158,14 @@ class InferDetectron2DenseposeFactory(dataprocess.CTaskFactory):
         # Set process information as string here
         self.info.name = "infer_detectron2_densepose"
         self.info.short_description = "Detectron2 inference model for human pose detection."
-        self.info.description = "Inference model for human pose detection trained on COCO dataset. " \
-                                "Implementation from Detectron2 (Facebook Research). " \
-                                "Dense human pose estimation aims at mapping all human pixels " \
-                                "of an RGB image to the 3D surface of the human body. " \
-                                "The model used is composed by ResNet50 backbone + panoptic FPN head."
         self.info.authors = "Rıza Alp Güler, Natalia Neverova, Iasonas Kokkinos"
         self.info.article = "DensePose: Dense Human Pose Estimation In The Wild"
         self.info.journal = "Conference on Computer Vision and Pattern Recognition (CVPR)"
         self.info.year = 2018
         self.info.license = "Apache-2.0 License"
         self.info.version = "1.2.0"
-        self.info.repo = "https://github.com/facebookresearch/detectron2/tree/master/projects/DensePose"
+        self.info.repository = "https://github.com/Ikomia-hub/infer_detectron2_densepose/"
+        self.info.original_repository = "https://github.com/facebookresearch/detectron2/tree/master/projects/DensePose"
         self.info.documentation_link = "https://detectron2.readthedocs.io/index.html"
         self.info.path = "Plugins/Python/Pose"
         self.info.icon_path = "icons/detectron2.png"
