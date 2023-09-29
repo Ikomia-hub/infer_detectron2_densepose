@@ -170,6 +170,8 @@ class InferDetectron2DenseposeFactory(dataprocess.CTaskFactory):
         self.info.path = "Plugins/Python/Pose"
         self.info.icon_path = "icons/detectron2.png"
         self.info.keywords = "human,pose,detection,keypoint,facebook,detectron2,mesh,3D surface"
+        self.info.algo_type = core.AlgoType.INFER
+        self.info.algo_tasks = "KEYPOINTS_DETECTION"
 
     def create(self, param=None):
         # Create process object
