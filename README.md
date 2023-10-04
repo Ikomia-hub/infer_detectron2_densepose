@@ -1,17 +1,17 @@
 <div align="center">
-  <img src="images/icon.png" alt="Algorithm icon">
+  <img src="https://raw.githubusercontent.com/Ikomia-hub/infer_detectron2_densepose/main/icons/detectron2.png" alt="Algorithm icon">
   <h1 align="center">infer_detectron2_densepose</h1>
 </div>
 <br />
 <p align="center">
-    <a href="https://github.com/Ikomia-hub/_algorithm_name_">
-        <img alt="Stars" src="https://img.shields.io/github/stars/Ikomia-hub/_algorithm_name_">
+    <a href="https://github.com/Ikomia-hub/infer_detectron2_densepose">
+        <img alt="Stars" src="https://img.shields.io/github/stars/Ikomia-hub/infer_detectron2_densepose">
     </a>
     <a href="https://app.ikomia.ai/hub/">
         <img alt="Website" src="https://img.shields.io/website/http/app.ikomia.ai/en.svg?down_color=red&down_message=offline&up_message=online">
     </a>
-    <a href="https://github.com/Ikomia-hub/_algorithm_name_/blob/main/LICENSE.md">
-        <img alt="GitHub" src="https://img.shields.io/github/license/Ikomia-hub/_algorithm_name_.svg?color=blue">
+    <a href="https://github.com/Ikomia-hub/infer_detectron2_densepose/blob/main/LICENSE.md">
+        <img alt="GitHub" src="https://img.shields.io/github/license/Ikomia-hub/infer_detectron2_densepose.svg?color=blue">
     </a>    
     <br>
     <a href="https://discord.com/invite/82Tnw9UGGc">
